@@ -31,34 +31,34 @@ async def Startmes(message: types.Message):
     await message.answer("Здравствуй, это программа для устного счета, Впиши /starttest чтобы получить 3 вопроса")
 @router.message(StateFilter(None), Command('starttest'))
 async def prm1(message, state: FSMContext):
-    n = await randomprimer1()
+    n = randomprimer1()
     await state.update_data(ans1 = eval(n))
-    await message.answer(text=f"Первый пример:{n}") 
-    await state.set_state(Primer.waitfrop1())
+    await message.answer(f"Первый пример:{n}") 
+    await state.set_state(Primer.waitfrop1)
 @router.message(Primer.waitfrop1)
 async def Chosen1(message: types.Message, state: FSMContext):
     await state.update_data(prim1 = message)
+    m = randomprimer2()
+    await message.answer(f"Второй пример:{m}")
+    await state.update_data(ans2 = eval(m))
     await state.set_state(Primer.waitfrop2)
-    n = await randomprimer2()
-    await message.answer(f"Второй пример:{n}")
-    await state.update_data(ans2 = eval(n))
 @router.message(Primer.waitfrop2)
 async def Chosen2(message: types.Message, state: FSMContext):
-    await state.update_state(prim2 = message)
+    await state.update_data(prim2 = message)
+    s = randomprimer3()
+    await message.answer(f"третий пример:{s}")
+    await state.update_data(ans3 = eval(s))
     await state.set_state(Primer.waitfrop3)
-    n = await randomprimer3()
-    message.answer(f'третий пример:{n}')
-    await state.update_data(ans3 = eval(n))
 @router.message(Primer.waitfrop3)
 async def getresult(message: types.Message, state: FSMContext):
-    await state.update_state(prim3 = message)
-    await state.set_state(Primer.endoftest)
+    await state.update_data(prim3 = message)
     await message.answer("ВЫ закончили тест, введите /result , чтобы узнать свой результат")
+    await state.set_state(Primer.endoftest)
 @router.message(Primer.endoftest,Command("result"))
 async def getresult(message:types.Message, state: FSMContext):
     user_data = await state.get_data()
-    trueprimer = await 0
-    allprimer = await 0
+    trueprimer = 0
+    allprimer = 0
     if str(user_data['prim1']) == str(user_data['ans1']):
         trueprimer+=1
     allprimer +=1
@@ -68,4 +68,4 @@ async def getresult(message:types.Message, state: FSMContext):
     if str(user_data['prim3']) == str(user_data['ans3']):
         trueprimer +=1
     allprimer+=1
-    message.answer(text = f"Ваши правильные ответы:{trueprimer}, Все ответы:{allprimer}")
+    await message.answer(text = f"Ваши правильные ответы:{trueprimer}, Все ответы:{allprimer} \n ваш ответ 1:{user_data['prim1']}, правильный ответ 1:{user_data['ans1']}")
